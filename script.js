@@ -1,6 +1,9 @@
 const submitButton = document.getElementById("submitLink");
 const formMessage = document.getElementById("formMessage");
 const linkList = document.getElementById("linkList");
+const searchInput = document.getElementById("searchLinks");
+
+let allLinks = [];
 
 async function fetchLinks() {
     try {
@@ -12,7 +15,8 @@ async function fetchLinks() {
             return;
         }
 
-        renderLinksByCategory(data);
+        allLinks = data;
+        renderLinksByCategory(allLinks);
     } catch (error) {
         linkList.innerHTML = `<p class="error">Error fetching links</p>`;
         console.error(error);
@@ -47,6 +51,17 @@ function renderLinksByCategory(links) {
         h3.addEventListener("click", () => h3.parentElement.classList.toggle("collapsed"));
     });
 }
+
+// Filter links by search input
+searchInput.addEventListener("input", () => {
+    const query = searchInput.value.toLowerCase();
+    const filteredLinks = allLinks.filter(
+        link => link.name.toLowerCase().includes(query) ||
+                (link.category && link.category.toLowerCase().includes(query)) ||
+                link.url.toLowerCase().includes(query)
+    );
+    renderLinksByCategory(filteredLinks);
+});
 
 submitButton.addEventListener("click", async () => {
     const name = document.getElementById("newName").value.trim();

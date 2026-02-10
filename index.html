@@ -16,15 +16,18 @@
 <main>
   <section id="add-link">
     <h2>Add New Link</h2>
-    <input type="text" id="newName" placeholder="Name">
-    <input type="url" id="newURL" placeholder="URL">
-    <input type="text" id="newCategory" placeholder="Category">
+    <div class="input-group">
+      <input type="text" id="newName" placeholder="Name" class="small-input">
+      <input type="url" id="newURL" placeholder="URL" class="small-input">
+      <input type="text" id="newCategory" placeholder="Category" class="small-input">
+    </div>
     <button id="submitLink">Add Link</button>
     <p id="formMessage" class="form-message"></p>
   </section>
 
   <section id="linkListContainer">
     <h2>All Links</h2>
+    <input type="text" id="searchLinks" placeholder="Search links..." class="search-input">
     <div id="linkList"></div>
   </section>
 </main>
