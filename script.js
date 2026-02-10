@@ -1,76 +1,67 @@
-const form = document.getElementById('link-form');
-const message = document.getElementById('form-message');
-const container = document.getElementById('links-container');
+const submitButton = document.getElementById("submitLink");
+const formMessage = document.getElementById("formMessage");
+const linkList = document.getElementById("linkList");
 
-// Fetch links from serverless function
 async function fetchLinks() {
-  try {
-    const res = await fetch('/api/links');
-    const data = await res.json();
-    if (!data || data.error) throw new Error(data.error || "Error fetching links");
+    try {
+        const res = await fetch("/api/links");
+        const data = await res.json();
+        linkList.innerHTML = "";
 
-    const grouped = data.reduce((acc, link) => {
-      (acc[link.category] = acc[link.category] || []).push(link);
-      return acc;
-    }, {});
+        if (data.length === 0) {
+            linkList.innerHTML = "<p>No links yet.</p>";
+            return;
+        }
 
-    renderLinks(grouped);
-  } catch (err) {
-    container.innerHTML = `<p class="error">${err.message}</p>`;
-  }
+        data.forEach(link => {
+            const div = document.createElement("div");
+            div.className = "link-card";
+            div.innerHTML = `<a href="${link.url}" target="_blank">${link.name}</a> <span>${link.category}</span>`;
+            linkList.appendChild(div);
+        });
+    } catch (error) {
+        linkList.innerHTML = `<p style="color:red;">Error fetching links</p>`;
+        console.error(error);
+    }
 }
 
-// Render collapsible categories
-function renderLinks(grouped) {
-  container.innerHTML = '';
-  for (const category in grouped) {
-    const div = document.createElement('div');
-    div.className = 'category';
+submitButton.addEventListener("click", async () => {
+    const name = document.getElementById("newName").value.trim();
+    const url = document.getElementById("newURL").value.trim();
+    const category = document.getElementById("newCategory").value.trim();
 
-    const title = document.createElement('h3');
-    title.textContent = category;
-    title.addEventListener('click', () => {
-      div.classList.toggle('collapsed');
-    });
+    if (!name || !url) {
+        formMessage.textContent = "Name and URL are required";
+        formMessage.style.color = "red";
+        return;
+    }
 
-    const list = document.createElement('ul');
-    grouped[category].forEach(link => {
-      const li = document.createElement('li');
-      li.innerHTML = `<a href="${link.url}" target="_blank">${link.name}</a>`;
-      list.appendChild(li);
-    });
+    try {
+        const res = await fetch("/api/links", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, url, category })
+        });
 
-    div.appendChild(title);
-    div.appendChild(list);
-    container.appendChild(div);
-  }
-}
+        const result = await res.json();
 
-// Add new link
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const name = document.getElementById('name').value.trim();
-  const url = document.getElementById('url').value.trim();
-  const category = document.getElementById('category').value.trim();
-
-  if (!name || !url || !category) return;
-
-  try {
-    const res = await fetch('/api/links', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, url, category })
-    });
-    const data = await res.json();
-
-    if (data.error) throw new Error(data.error);
-
-    message.textContent = "✅ Link added!";
-    form.reset();
-    fetchLinks();
-  } catch (err) {
-    message.textContent = `❌ Error adding link: ${err.message}`;
-  }
+        if (res.ok) {
+            formMessage.textContent = "Link added successfully!";
+            formMessage.style.color = "green";
+            document.getElementById("newName").value = "";
+            document.getElementById("newURL").value = "";
+            document.getElementById("newCategory").value = "";
+            fetchLinks();
+        } else {
+            formMessage.textContent = `Error: ${result.error}`;
+            formMessage.style.color = "red";
+        }
+    } catch (error) {
+        formMessage.textContent = "Error adding link.";
+        formMessage.style.color = "red";
+        console.error(error);
+    }
 });
 
+// Fetch links on load
 fetchLinks();
