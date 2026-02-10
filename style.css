@@ -1,0 +1,47 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #f6f7fb;
+  padding: 40px;
+  max-width: 800px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+}
+
+form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+input, button {
+  padding: 10px;
+  font-size: 14px;
+}
+
+button {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.category {
+  margin-bottom: 20px;
+}
+
+.category h2 {
+  cursor: pointer;
+  background: #e5e7eb;
+  padding: 10px;
+}
+
+.link {
+  padding: 8px 12px;
+  background: white;
+  border-left: 4px solid #4f46e5;
+  margin-bottom: 6px;
+}
