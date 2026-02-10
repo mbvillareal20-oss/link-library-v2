@@ -1,13 +1,12 @@
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-// ⚠️ These MUST come from Vercel env vars
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const form = document.getElementById("link-form");
 const linksDiv = document.getElementById("links");
+const form = document.getElementById("add-form");
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -17,18 +16,23 @@ form.addEventListener("submit", async (e) => {
   const category = categoryInput.value;
 
   await supabase.from("links").insert([{ name, url, category }]);
-
   form.reset();
   loadLinks();
 });
 
 async function loadLinks() {
-  linksDiv.innerHTML = "";
-
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("links")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("category");
+
+  if (error) {
+    linksDiv.innerHTML = "Error loading links";
+    console.error(error);
+    return;
+  }
+
+  linksDiv.innerHTML = "";
 
   const grouped = {};
   data.forEach(l => {
@@ -36,29 +40,18 @@ async function loadLinks() {
     grouped[l.category].push(l);
   });
 
-  Object.keys(grouped).forEach(cat => {
-    const catDiv = document.createElement("div");
-    catDiv.className = "category";
-
-    const title = document.createElement("h2");
-    title.textContent = cat;
-
-    const list = document.createElement("div");
-
-    title.onclick = () => {
-      list.style.display = list.style.display === "none" ? "block" : "none";
-    };
+  for (const cat in grouped) {
+    const section = document.createElement("section");
+    section.innerHTML = `<h2>${cat}</h2>`;
 
     grouped[cat].forEach(l => {
-      const item = document.createElement("div");
-      item.className = "link";
-      item.innerHTML = `<a href="${l.url}" target="_blank">${l.name}</a>`;
-      list.appendChild(item);
+      const div = document.createElement("div");
+      div.innerHTML = `<a href="${l.url}" target="_blank">${l.name}</a>`;
+      section.appendChild(div);
     });
 
-    catDiv.append(title, list);
-    linksDiv.appendChild(catDiv);
-  });
+    linksDiv.appendChild(section);
+  }
 }
 
 loadLinks();
