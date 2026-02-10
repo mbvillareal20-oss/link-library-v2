@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Link Library</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Link Library</h1>
+  </header>
+
+  <main>
+    <section id="add-link">
+      <h2>Add a Link</h2>
+      <form id="link-form">
+        <input type="text" id="name" placeholder="Link Name" required />
+        <input type="url" id="url" placeholder="Link URL" required />
+        <input type="text" id="category" placeholder="Category" required />
+        <button type="submit">Add Link</button>
+      </form>
+      <div id="form-msg"></div>
+    </section>
+
+    <section id="links-section">
+      <h2>Links</h2>
+      <div id="links-container">Loading links...</div>
+    </section>
+  </main>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
