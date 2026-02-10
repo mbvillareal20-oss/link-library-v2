@@ -6,23 +6,46 @@ async function fetchLinks() {
     try {
         const res = await fetch("/api/links");
         const data = await res.json();
-        linkList.innerHTML = "";
 
-        if (data.length === 0) {
-            linkList.innerHTML = "<p>No links yet.</p>";
+        if (!Array.isArray(data)) {
+            linkList.innerHTML = `<p class="error">Error: Invalid data received</p>`;
             return;
         }
 
-        data.forEach(link => {
-            const div = document.createElement("div");
-            div.className = "link-card";
-            div.innerHTML = `<a href="${link.url}" target="_blank">${link.name}</a> <span>${link.category}</span>`;
-            linkList.appendChild(div);
-        });
+        renderLinksByCategory(data);
     } catch (error) {
-        linkList.innerHTML = `<p style="color:red;">Error fetching links</p>`;
+        linkList.innerHTML = `<p class="error">Error fetching links</p>`;
         console.error(error);
     }
+}
+
+// Render links grouped by category
+function renderLinksByCategory(links) {
+    const categories = {};
+    links.forEach(link => {
+        const cat = link.category || "Uncategorized";
+        if (!categories[cat]) categories[cat] = [];
+        categories[cat].push(link);
+    });
+
+    linkList.innerHTML = "";
+
+    for (const cat in categories) {
+        const div = document.createElement("div");
+        div.className = "category";
+        div.innerHTML = `
+            <h3>${cat}</h3>
+            <ul>
+                ${categories[cat].map(l => `<li><a href="${l.url}" target="_blank">${l.name}</a></li>`).join('')}
+            </ul>
+        `;
+        linkList.appendChild(div);
+    }
+
+    // Add toggle functionality for categories
+    document.querySelectorAll(".category h3").forEach(h3 => {
+        h3.addEventListener("click", () => h3.parentElement.classList.toggle("collapsed"));
+    });
 }
 
 submitButton.addEventListener("click", async () => {
@@ -63,5 +86,5 @@ submitButton.addEventListener("click", async () => {
     }
 });
 
-// Fetch links on load
+// Fetch links on page load
 fetchLinks();

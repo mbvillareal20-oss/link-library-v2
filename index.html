@@ -4,24 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dynamic Link Library</title>
-<style>
-body { font-family: sans-serif; padding: 2rem; background: #f5f5f5; }
-#linkList { margin-top: 1rem; }
-.link-card { background: white; padding: 1rem; margin: 0.5rem 0; border-radius: 5px; }
-.link-card a { font-weight: bold; color: #333; text-decoration: none; }
-.link-card span { float: right; background: #4f46e5; color: white; padding: 2px 8px; border-radius: 5px; }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>Dynamic Link Library</h1>
-<input type="text" id="newName" placeholder="Name">
-<input type="url" id="newURL" placeholder="URL">
-<input type="text" id="newCategory" placeholder="Category">
-<button id="submitLink">Add Link</button>
-<p id="formMessage"></p>
+<header>
+  <h1>📚 Dynamic Link Library</h1>
+  <p>Add, view, and organize your favorite links easily!</p>
+</header>
 
-<div id="linkList"></div>
+<main>
+  <section id="add-link">
+    <h2>Add New Link</h2>
+    <input type="text" id="newName" placeholder="Name">
+    <input type="url" id="newURL" placeholder="URL">
+    <input type="text" id="newCategory" placeholder="Category">
+    <button id="submitLink">Add Link</button>
+    <p id="formMessage" class="form-message"></p>
+  </section>
+
+  <section id="linkListContainer">
+    <h2>All Links</h2>
+    <div id="linkList"></div>
+  </section>
+</main>
 
 <script src="script.js"></script>
 </body>
