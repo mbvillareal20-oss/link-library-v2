@@ -1,4 +1,4 @@
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx_DUeJBdMYPT7L24V6LRpExuF0zGv7yUfhmbI6LapvH0sgBVG6opopuUsgJ4iTLAdqBA/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx_DUeJBdMYPT7L24V6LRpExuF0zGv7yUfhmbI6LapvH0sgBVG6opopuUsgJ4iTLAdqBA/exec"; // your Web App URL
 
 const submitButton = document.getElementById("submitLink");
 const formMessage = document.getElementById("formMessage");
@@ -18,7 +18,7 @@ async function fetchLinks() {
             return;
         }
 
-        allLinks = data.sort((a,b) => (a.order || 0) - (b.order || 0));
+        allLinks = data.sort((a, b) => (a.order || 0) - (b.order || 0));
         renderLinksByCategory(allLinks);
         initDragAndDrop();
     } catch (error) {
