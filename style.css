@@ -123,6 +123,7 @@ main {
 .category ul li {
   padding: 0.5rem 0;
   border-bottom: 1px solid #f0f0f0;
+  cursor: move;
 }
 
 .category ul li:last-child {
@@ -137,6 +138,11 @@ main {
 
 .category.collapsed ul {
   display: none;
+}
+
+li.dragging {
+  opacity: 0.5;
+  background: #e4e6eb;
 }
 
 .error {
