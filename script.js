@@ -3,16 +3,17 @@ const formMessage = document.getElementById("formMessage");
 const linkList = document.getElementById("linkList");
 const searchInput = document.getElementById("searchLinks");
 
-// Replace with your deployed Apps Script URL
+// Your deployed Apps Script URL
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvlS2P_2Z-7hSBuXZ-HibW5AdxM5vaw4yU4sPJbqhIT_GSWVQoVDzgg2Tzf3PhElfO6A/exec";
 
 let allLinks = [];
 
-// Fetch all links from Google Sheets
+// Fetch links from Google Sheets
 async function fetchLinks() {
     try {
         const res = await fetch(WEB_APP_URL);
         const data = await res.json();
+
         if (!Array.isArray(data)) throw new Error("Invalid data");
 
         allLinks = data.map(l => ({
@@ -23,64 +24,42 @@ async function fetchLinks() {
             order: parseInt(l.order)
         }));
 
-        renderLinksByCategory(allLinks);
+        renderLinks(allLinks);
     } catch (err) {
         linkList.innerHTML = `<p class="error">Error fetching links</p>`;
         console.error(err);
     }
 }
 
-// Render links grouped by category
-function renderLinksByCategory(links) {
-    const categories = {};
-    links.forEach(link => {
-        const cat = link.category || "Uncategorized";
-        if (!categories[cat]) categories[cat] = [];
-        categories[cat].push(link);
-    });
-
+// Render links in the original layout
+function renderLinks(links) {
     linkList.innerHTML = "";
 
-    for (const cat in categories) {
-        const div = document.createElement("div");
-        div.className = "category";
-        div.innerHTML = `
-            <h3>${cat}</h3>
-            <ul></ul>
-        `;
-        const ul = div.querySelector("ul");
+    links
+        .sort((a, b) => a.order - b.order)
+        .forEach(l => {
+            const div = document.createElement("div");
+            div.className = "link-item";
+            div.dataset.id = l.id;
+            div.innerHTML = `<strong>${l.name}</strong> <a href="${l.url}" target="_blank">${l.url}</a> <em>${l.category}</em>`;
+            linkList.appendChild(div);
+        });
 
-        categories[cat]
-            .sort((a, b) => a.order - b.order)
-            .forEach(l => {
-                const li = document.createElement("li");
-                li.dataset.id = l.id;
-                li.innerHTML = `<a href="${l.url}" target="_blank">${l.name}</a>`;
-                ul.appendChild(li);
-            });
-
-        linkList.appendChild(div);
-
-        // Toggle category collapse
-        div.querySelector("h3").addEventListener("click", () => div.classList.toggle("collapsed"));
-
-        // Enable drag-and-drop per category using SortableJS
-        if (typeof Sortable !== "undefined") {
-            new Sortable(ul, {
-                animation: 150,
-                onEnd: () => {
-                    const newOrder = [...ul.children].map((li, idx) => ({
-                        id: parseInt(li.dataset.id),
-                        order: idx + 1
-                    }));
-                    updateOrder(newOrder);
-                }
-            });
-        }
+    if (typeof Sortable !== "undefined") {
+        new Sortable(linkList, {
+            animation: 150,
+            onEnd: () => {
+                const newOrder = [...linkList.children].map((div, idx) => ({
+                    id: parseInt(div.dataset.id),
+                    order: idx + 1
+                }));
+                updateOrder(newOrder);
+            }
+        });
     }
 }
 
-// Add a new link
+// Add new link
 submitButton.addEventListener("click", async () => {
     const name = document.getElementById("newName").value.trim();
     const url = document.getElementById("newURL").value.trim();
@@ -139,7 +118,7 @@ searchInput.addEventListener("input", () => {
         (l.category && l.category.toLowerCase().includes(query)) ||
         l.url.toLowerCase().includes(query)
     );
-    renderLinksByCategory(filtered);
+    renderLinks(filtered);
 });
 
 // Load links on page load
