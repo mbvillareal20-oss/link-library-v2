@@ -1,38 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DRMD Link Library</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Link Library</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- SortableJS for drag-and-drop -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 </head>
 <body>
+  <h1>Link Library</h1>
 
-<header>
-  <h1>📚 DRMD Link Library</h1>
-  <p>Add, view, and organize your favorite links easily!</p>
-</header>
+  <!-- Add Link Form -->
+  <div id="addLinkForm">
+    <input type="text" id="linkName" placeholder="Name">
+    <input type="url" id="linkURL" placeholder="URL">
+    <input type="text" id="linkCategory" placeholder="Category">
+    <button id="addBtn">Add Link</button>
+  </div>
 
-<main>
-  <section id="add-link">
-    <h2>Add New Link</h2>
-    <div class="input-group">
-      <input type="text" id="newName" placeholder="Name" class="small-input">
-      <input type="url" id="newURL" placeholder="URL" class="small-input">
-      <input type="text" id="newCategory" placeholder="Category" class="small-input">
-    </div>
-    <button id="submitLink">Add Link</button>
-    <p id="formMessage" class="form-message"></p>
-  </section>
+  <!-- Search Box -->
+  <input type="text" id="searchBox" placeholder="Search links...">
 
-  <section id="linkListContainer">
-    <h2>All Links</h2>
-    <input type="text" id="searchLinks" placeholder="Search links..." class="search-input">
-    <div id="linkList"></div>
-  </section>
-</main>
+  <!-- Container for links -->
+  <div id="linkContainer"></div>
 
-<!-- Google Sheets integration -->
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
